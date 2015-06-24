@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/jquery/jquery-2.1.4.js"></script>
+    <script src="js/jquery/jquery-plugins/listbox.js"></script>
+    <link href="js/jquery/jquery-plugins/listbox.css" rel="stylesheet">
+</head>
+<body>
+
+    <script>
+        var populateCombo = function(fieldCombo, fieldArray) {
+            $.each(fieldArray, function(index) {
+                fieldCombo.append($("<option />").val(this).text(this));
+            });
+        };
+
+        var getFieldMap = function() {
+            var fieldMap = {};
+            $(".displayFieldTemplate").each(function(index) {
+                var rowTemplate = $(this);
+                fieldMap[rowTemplate.children('.fieldValue').val()] = rowTemplate.children('.displayValue').val()
+            })
+            return fieldMap;
+        };
+
+        var cloneElement = function(elementToClone,divClass) {
+            var clonedElement = elementToClone.last().clone(true);
+            clonedElement.children('.displayValue').val("");
+            return clonedElement;
+        };
+
+        $( document ).ready(function() {
+
+            populateCombo($(".fieldValue"),['Field1','Field2','Field3']);
+
+            populateCombo($(".schemaCombo"),['Schema 1','Schema 2','Schema 3']);
+
+            $(".schemaCombo").listbox();
+
+            $('.deleteFieldButton').click(function () {
+                if($("#displayFieldsContainer").children().length > 1)
+                    $(this).closest('div').remove();
+            });
+
+            $('#addRow').click(function () {
+                cloneElement($('.displayFieldTemplate')).appendTo('#displayFieldsContainer');
+            });
+
+            $('#getData').click(function () {
+                console.log(getFieldMap());
+            });
+
+            $('#getSchemaCsv').click(function () {
+                console.log(encodeURIComponent($(".schemaCombo").val() + ""));
+            });
+
+
+
+        });
+    </script>
+
+    <input type="button" id="addRow" value="Add"/>
+
+    <input type="button" id="getData" value="Get Fields"/>
+
+    <input type="button" id="getSchemaCsv" value="Get Schemas"/>
+
+    <div id="displayFieldsContainer">
+        <div class="displayFieldTemplate">
+            <select class="fieldValue"/>
+            <input class="displayValue" type="text" placeholder="Display Text" name="displayValue"/>
+            <input type="button" class="deleteFieldButton" value="Delete Field"/>
+        </div>
+
+    </div>
+
+    <br>
+
+    <select class="schemaCombo" multiple/>
+
+</body>
+
+
+</html>
