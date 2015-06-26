@@ -4,28 +4,26 @@
     <meta charset="UTF-8">
     <title></title>
     <script src="js/jquery/jquery-2.1.4.js"></script>
-    <script src="js/jquery/jquery-plugins/listbox.js"></script>
-    <link href="js/jquery/jquery-plugins/listbox.css" rel="stylesheet">
 </head>
 <body>
 
     <script>
         var populateCombo = function(fieldCombo, fieldArray) {
-            $.each(fieldArray, function(index) {
+            $.each(fieldArray, function() {
                 fieldCombo.append($("<option />").val(this).text(this));
             });
         };
 
         var getFieldMap = function() {
             var fieldMap = {};
-            $(".displayFieldTemplate").each(function(index) {
+            $(".displayFieldTemplate").each(function() {
                 var rowTemplate = $(this);
                 fieldMap[rowTemplate.children('.fieldValue').val()] = rowTemplate.children('.displayValue').val()
-            })
+            });
             return fieldMap;
         };
 
-        var cloneElement = function(elementToClone,divClass) {
+        var cloneElement = function(elementToClone) {
             var clonedElement = elementToClone.last().clone(true);
             clonedElement.children('.displayValue').val("");
             return clonedElement;
@@ -35,9 +33,7 @@
 
             populateCombo($(".fieldValue"),['Field1','Field2','Field3']);
 
-            populateCombo($(".schemaCombo"),['Schema 1','Schema 2','Schema 3']);
-
-            $(".schemaCombo").listbox();
+            populateCombo($("#schemaCombo"),['Schema 1','Schema 2','Schema 3']);
 
             $('.deleteFieldButton').click(function () {
                 if($("#displayFieldsContainer").children().length > 1)
@@ -53,7 +49,29 @@
             });
 
             $('#getSchemaCsv').click(function () {
-                console.log(encodeURIComponent($(".schemaCombo").val() + ""));
+                console.log(encodeURIComponent($("#schemaCombo").val() + ""));
+            });
+
+            $('#addSchema').click(function () {
+                var newSchemaValue = $('#schemaText').val();
+                if("" !== newSchemaValue) {
+                    $("#schemaCombo").append($("<option />").val(newSchemaValue).text(newSchemaValue));
+                }
+            });
+
+            $('#deleteSchema').click(function () {
+                var selectedSchemas = $('#schemaCombo').val();
+                if (selectedSchemas!=null) {
+                    $.each(selectedSchemas, function () {
+                        $("#schemaCombo").find("option[value='" + this + "']").remove();
+                    });
+                }
+            });
+
+            $("#schemaCombo").find("option").mousedown(function(e) {
+                e.preventDefault();
+                $(this).prop('selected', !$(this).prop('selected'));
+                return false;
             });
 
 
@@ -78,8 +96,13 @@
 
     <br>
 
-    <select class="schemaCombo" multiple/>
+    <input type="text" id="schemaText" placeholder="Enter new schema"/>
 
+    <input type="button" id="addSchema" value="Add Schema"/>
+
+    <select id="schemaCombo" multiple/>
+
+    <input type="button" id="deleteSchema" value="Delete Schema"/>
 </body>
 
 
